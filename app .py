@@ -1199,21 +1199,6 @@ def page_risk_predictor(df: pd.DataFrame):
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown('<div class="section-title">📋 موظفو الخطر المرتفع (Top 20 أعلى خطراً)</div>', unsafe_allow_html=True)
-    top_risk = df.nlargest(20, "Churn_Score_Raw")[
-        ["Employee_ID", "Department", "Tenure_Months", "Satisfaction_Score",
-         "Avg_Monthly_Hours", "Salary_Tier", "Churn_Score_Raw"]
-    ].copy()
-    top_risk["مستوى الخطر"] = top_risk["Churn_Score_Raw"].apply(
-        lambda x: "🔴 مرتفع" if x > 0.65 else ("🟡 متوسط" if x > 0.45 else "🟢 منخفض")
-    )
-    top_risk.columns = ["الرقم الوظيفي", "القسم", "الخدمة (أشهر)", "الرضا",
-                         "ساعات العمل", "مستوى الراتب", "درجة الخطر", "التصنيف"]
-    st.dataframe(
-        top_risk.style.background_gradient(subset=["درجة الخطر"], cmap="RdYlGn_r"),
-        use_container_width=True, height=380
-    )
 
 # ─────────────────────────────────────────────
 # PAGE 3 — Career Mobility Engine
