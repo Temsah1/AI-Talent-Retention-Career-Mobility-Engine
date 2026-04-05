@@ -1326,54 +1326,7 @@ def page_career_mobility(df: pd.DataFrame):
 
                     st.markdown("</div>", unsafe_allow_html=True)
 
-            st.markdown('<div class="section-title" style="margin-top:1rem;">📡 تحليل تغطية المهارات</div>', unsafe_allow_html=True)
-            categories = ["Match %", "Cosine Sim %", "Gap Count (inv)", "Required Skills", "Score"]
-            fig_radar = go.Figure()
-            for i, role in enumerate(results):
-                gap_inv = max(0, 100 - len(role["gap"]) * 15)
-                req_score = min(100, len(role["required"]) * 10)
-                vals = [
-                    role["match_pct"],
-                    role["similarity"] * 100,
-                    gap_inv,
-                    req_score,
-                    (role["match_pct"] + role["similarity"] * 100) / 2,
-                ]
-                vals += [vals[0]]
-                fig_radar.add_trace(go.Scatterpolar(
-                    r=vals,
-                    theta=categories + [categories[0]],
-                    fill="toself",
-                    name=role["title"],
-                    line=dict(color=colors[i % len(colors)], width=2),
-                    fillcolor=f"{colors[i % len(colors)]}22",
-                ))
-            fig_radar.update_layout(
-                polar=dict(
-                    bgcolor="rgba(0,0,0,0)",
-                    radialaxis=dict(visible=True, range=[0, 100], gridcolor="#1e2d42",
-                                   tickfont=dict(family="JetBrains Mono", size=9)),
-                    angularaxis=dict(gridcolor="#1e2d42"),
-                ),
-                **{k: v for k, v in PLOTLY_LAYOUT.items() if k not in ("xaxis", "yaxis")},
-                height=320,
-                showlegend=True,
-                legend=dict(font=dict(size=10, family="Syne"), orientation="h",
-                            yanchor="bottom", y=1.05),
-            )
-            st.plotly_chart(fig_radar, use_container_width=True, key="radar_skills")
-
-        elif analyze_btn and not skills_input:
-            st.markdown('<div class="alert-box alert-error">⚠️ يرجى إدخال مهارات أو اختيار موظف أولاً.</div>', unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <div class="engine-card" style="text-align:center; padding:4rem 2rem; opacity:0.55; margin-top:2rem;">
-                <div style="font-size:3.5rem; margin-bottom:1rem;">🚀</div>
-                <div style="font-family:'Syne',sans-serif; font-size:1rem; color:var(--text-secondary);">
-                    اختر موظفاً أو أدخل مهاراتك<br>واضغط "تحليل المسار الوظيفي"
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+          
 
 # ─────────────────────────────────────────────
 # PAGE 4 — Admin Dashboard (مع إدارة المستخدمين الكاملة)
