@@ -922,7 +922,7 @@ def render_sidebar():
         st.markdown("""
         <div style="margin-top:1rem; text-align:center; font-size:0.65rem;
                     color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
-            © 2025 AI Talent Engine<br>Powered by ML + NLP
+            © 2025 AI Talent Engine<br>Powered by Kareem Tamer Temsah 
         </div>
         """, unsafe_allow_html=True)
 
