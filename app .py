@@ -839,10 +839,7 @@ def render_login_page():
         <div style="margin-top:1.5rem; padding:1rem; background:rgba(43,127,255,0.06);
                     border:1px solid rgba(43,127,255,0.15); border-radius:8px;
                     font-size:0.78rem; color:#4a6fa0; font-family:'JetBrains Mono',monospace;">
-            <div style="color:#2b7fff; margin-bottom:0.4rem; font-weight:600;">🔑 Admin Demo</div>
-            <div>Email: kareemeltemsah7@gmail.com</div>
-            <div>Pass: temsah1</div>
-        </div>
+           
         """, unsafe_allow_html=True)
 
     with tab_reg:
