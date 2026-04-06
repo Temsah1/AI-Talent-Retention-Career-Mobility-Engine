@@ -1,11 +1,3 @@
-"""
-╔══════════════════════════════════════════════════════════════════╗
-║   AI Talent Retention & Career Mobility Engine                   ║
-║   محرك الذكاء الاصطناعي للاحتفاظ بالمواهب والمسار الوظيفي     ║
-║   Version: 2.0  |  Built with Streamlit + ML + NLP              ║
-║   Responsive + Animated Navbar + Admin User Management          ║
-╚══════════════════════════════════════════════════════════════════╝
-"""
 
 import streamlit as st
 import pandas as pd
