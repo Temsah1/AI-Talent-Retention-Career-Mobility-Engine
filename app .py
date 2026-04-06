@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -32,7 +31,7 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-# GLOBAL CSS — Enterprise Dark Mode + Responsive + Animated Navbar
+# GLOBAL CSS
 # ─────────────────────────────────────────────
 GLOBAL_CSS = """
 <style>
@@ -70,92 +69,129 @@ html, body, [data-testid="stAppViewContainer"] {
     font-family: 'Cairo', 'Syne', sans-serif !important;
 }
 
-/* ========== SIDEBAR SLIDER (محسن) ========== */
-[data-testid="stSidebar"] {
-    background: #060b12 !important;
-    border-right: 1px solid var(--border) !important;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    z-index: 1001 !important;
-    will-change: transform;
-}
-
+/* ========== SIDEBAR — DESKTOP ========== */
 @media (min-width: 993px) {
     [data-testid="stSidebar"] {
         transform: translateX(0) !important;
-    }
-}
-
-@media (max-width: 992px) {
-    [data-testid="stSidebar"] {
-        transform: translateX(-100%);
         position: fixed !important;
-        top: 0;
-        left: 0;
+        top: 0 !important;
+        left: 0 !important;
         height: 100vh !important;
         width: 280px !important;
-        box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+        background: #060b12 !important;
+        border-right: 1px solid var(--border) !important;
+        z-index: 1050 !important;
+        overflow-y: auto !important;
+        box-shadow: none !important;
     }
-    [data-testid="stSidebar"][data-state="expanded"] {
+    .block-container {
+        margin-left: 280px !important;
+        padding: 2rem 2rem 2rem 2rem !important;
+    }
+    .hamburger-btn  { display: none !important; }
+    .sidebar-overlay { display: none !important; }
+}
+
+/* ========== SIDEBAR — MOBILE SLIDE ========== */
+@media (max-width: 992px) {
+    [data-testid="stSidebar"] {
+        transform: translateX(-100%) !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        width: 280px !important;
+        background: #060b12 !important;
+        border-right: 1px solid var(--border) !important;
+        z-index: 1050 !important;
+        overflow-y: auto !important;
+        box-shadow: 6px 0 30px rgba(0,0,0,0.7) !important;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        will-change: transform;
+    }
+    [data-testid="stSidebar"].sidebar-open {
         transform: translateX(0) !important;
     }
     .block-container {
+        margin-left: 0 !important;
         padding: 1rem !important;
         padding-top: 70px !important;
     }
-    .page-hero h1 { font-size: 1.4rem !important; }
-    .page-hero p { max-width: 100% !important; font-size: 0.85rem !important; }
-    .stat-card .stat-value { font-size: 1.6rem !important; }
-    .stat-card .stat-label { font-size: 0.7rem !important; }
-    .section-title { font-size: 1rem !important; }
-    .job-card h4 { font-size: 0.9rem !important; }
-    .stDataFrame {
-        overflow-x: auto !important;
-    }
-    .stPlotlyChart {
-        height: 280px !important;
-    }
+    .page-hero h1     { font-size: 1.3rem !important; }
+    .page-hero p      { max-width: 100% !important; font-size: 0.82rem !important; }
+    .stat-card .stat-value { font-size: 1.5rem !important; }
+    .stat-card .stat-label { font-size: 0.68rem !important; }
+    .section-title    { font-size: 0.95rem !important; }
+    .stDataFrame      { overflow-x: auto !important; }
+    .stPlotlyChart    { height: 260px !important; }
 }
 
+/* ========== HAMBURGER BUTTON ========== */
 .hamburger-btn {
     display: none;
     position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 1100;
+    top: 14px;
+    left: 14px;
+    z-index: 1200;
     background: var(--gradient-accent);
     border: none;
     border-radius: 10px;
-    padding: 8px 12px;
+    width: 42px;
+    height: 42px;
     cursor: pointer;
-    font-size: 1.5rem;
     color: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    transition: all 0.2s;
+    box-shadow: 0 2px 12px rgba(43,127,255,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0;
 }
 .hamburger-btn:hover {
-    transform: scale(1.02);
-    background: #2b7fff;
+    transform: scale(1.06);
+    box-shadow: 0 4px 20px rgba(43,127,255,0.55);
+}
+.hamburger-btn .bar {
+    width: 20px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
+    display: block;
+}
+.hamburger-btn.is-open .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+.hamburger-btn.is-open .bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.hamburger-btn.is-open .bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
 }
 @media (max-width: 992px) {
-    .hamburger-btn {
-        display: block;
-    }
+    .hamburger-btn { display: flex !important; }
 }
 
+/* ========== OVERLAY ========== */
 .sidebar-overlay {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    z-index: 1000;
-    backdrop-filter: blur(3px);
-    transition: opacity 0.2s;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(4, 8, 18, 0.78);
+    z-index: 1040;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.sidebar-overlay.visible {
+    display: block;
 }
 .sidebar-overlay.active {
-    display: block;
+    opacity: 1;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -406,87 +442,119 @@ st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
 st.markdown(CARD_CSS, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# HAMBURGER BUTTON + OVERLAY (JavaScript for mobile sidebar toggle)
+# HAMBURGER BUTTON + OVERLAY + SLIDE JS
 # ─────────────────────────────────────────────
 st.markdown("""
-<button class="hamburger-btn" id="hamburgerBtn">☰</button>
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Menu">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+</button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <script>
 (function() {
-    let sidebar = null;
-    let hamburger = document.getElementById('hamburgerBtn');
-    let overlay = document.getElementById('sidebarOverlay');
+    'use strict';
+
+    var hamburger = document.getElementById('hamburgerBtn');
+    var overlay   = document.getElementById('sidebarOverlay');
+    var isOpen    = false;
 
     function getSidebar() {
-        if (!sidebar) {
-            sidebar = document.querySelector('[data-testid="stSidebar"]');
-        }
-        return sidebar;
+        return document.querySelector('[data-testid="stSidebar"]');
     }
 
-    function toggleSidebar(forceExpand = null) {
-        const sb = getSidebar();
+    function openSidebar() {
+        var sb = getSidebar();
         if (!sb) return;
-        const isExpanded = sb.getAttribute('data-state') === 'expanded';
-        let newState = forceExpand !== null ? forceExpand : !isExpanded;
-        if (newState) {
-            sb.setAttribute('data-state', 'expanded');
-            if (overlay) overlay.classList.add('active');
-        } else {
-            sb.setAttribute('data-state', 'collapsed');
-            if (overlay) overlay.classList.remove('active');
-        }
+        isOpen = true;
+        sb.classList.add('sidebar-open');
+        hamburger.classList.add('is-open');
+        // Overlay fade in
+        overlay.classList.add('visible');
+        requestAnimationFrame(function() {
+            overlay.classList.add('active');
+        });
+        document.body.style.overflow = 'hidden';
     }
 
     function closeSidebar() {
-        toggleSidebar(false);
+        var sb = getSidebar();
+        if (!sb) return;
+        isOpen = false;
+        sb.classList.remove('sidebar-open');
+        hamburger.classList.remove('is-open');
+        // Overlay fade out
+        overlay.classList.remove('active');
+        setTimeout(function() {
+            overlay.classList.remove('visible');
+        }, 300);
+        document.body.style.overflow = '';
     }
 
+    // Hamburger toggle
     if (hamburger) {
-        hamburger.addEventListener('click', (e) => {
+        hamburger.addEventListener('click', function(e) {
             e.stopPropagation();
-            toggleSidebar();
+            if (isOpen) closeSidebar();
+            else openSidebar();
         });
     }
+
+    // Overlay click → close
     if (overlay) {
         overlay.addEventListener('click', closeSidebar);
     }
 
-    function addCloseOnNavLinks() {
-        const sb = getSidebar();
-        if (sb) {
-            const links = sb.querySelectorAll('button');
-            links.forEach(btn => {
-                btn.removeEventListener('click', closeSidebar);
-                btn.addEventListener('click', closeSidebar);
-            });
-        }
-    }
+    // Escape key → close
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isOpen) closeSidebar();
+    });
 
-    const observer = new MutationObserver(addCloseOnNavLinks);
-    function observeSidebar() {
-        const sb = getSidebar();
-        if (sb) {
-            observer.observe(sb, { childList: true, subtree: true });
-            addCloseOnNavLinks();
-        }
-    }
-    setTimeout(observeSidebar, 500);
-
-    function handleResize() {
-        const sb = getSidebar();
+    // لما تضغط nav button في الـ sidebar → اغلق على mobile
+    function bindNavLinks() {
+        var sb = getSidebar();
         if (!sb) return;
-        if (window.innerWidth > 992) {
-            sb.setAttribute('data-state', 'expanded');
-            if (overlay) overlay.classList.remove('active');
-        } else {
-            sb.setAttribute('data-state', 'collapsed');
-            if (overlay) overlay.classList.remove('active');
-        }
+        sb.querySelectorAll('button').forEach(function(btn) {
+            if (!btn.dataset.closeListener) {
+                btn.addEventListener('click', function() {
+                    if (window.innerWidth <= 992) {
+                        setTimeout(closeSidebar, 150);
+                    }
+                });
+                btn.dataset.closeListener = 'true';
+            }
+        });
     }
-    window.addEventListener('resize', handleResize);
-    handleResize();
+
+    // Observer على الـ sidebar لـ rebind لما Streamlit يعيد رسمه
+    function startObserver() {
+        var sb = getSidebar();
+        if (!sb) {
+            setTimeout(startObserver, 300);
+            return;
+        }
+        bindNavLinks();
+        new MutationObserver(function() {
+            bindNavLinks();
+        }).observe(sb, { childList: true, subtree: true });
+    }
+
+    // Resize: لو رجعنا desktop نغلق وننظف
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+            var sb = getSidebar();
+            if (sb) sb.classList.remove('sidebar-open');
+            hamburger.classList.remove('is-open');
+            overlay.classList.remove('active', 'visible');
+            document.body.style.overflow = '';
+            isOpen = false;
+        }
+    });
+
+    // ابدأ بعد ما Streamlit يرسم الـ DOM
+    setTimeout(startObserver, 600);
+
 })();
 </script>
 """, unsafe_allow_html=True)
@@ -561,9 +629,7 @@ def get_all_users():
     conn.close()
     return df
 
-# دوال إدارة المستخدمين الجديدة
 def delete_user(user_id: int, current_user_id: int):
-    """حذف مستخدم مع منع حذف المستخدم الحالي"""
     if user_id == current_user_id:
         return False, "لا يمكنك حذف حسابك الحالي."
     conn = get_db()
@@ -575,7 +641,6 @@ def delete_user(user_id: int, current_user_id: int):
     return deleted, "تم حذف المستخدم." if deleted else "المستخدم غير موجود."
 
 def promote_to_admin(user_id: int):
-    """ترقية مستخدم إلى Admin"""
     conn = get_db()
     c = conn.cursor()
     c.execute("UPDATE users SET role = 'admin' WHERE id = ?", (user_id,))
@@ -585,7 +650,6 @@ def promote_to_admin(user_id: int):
     return updated, "تمت الترقية إلى Admin."
 
 def demote_to_user(user_id: int, current_user_id: int, current_user_role: str):
-    """خفض Admin إلى user، مع منع خفض آخر Admin"""
     if user_id == current_user_id and current_user_role == "admin":
         return False, "لا يمكنك خفض دورك بنفسك."
     conn = get_db()
@@ -827,12 +891,6 @@ def render_login_page():
                     st.rerun()
                 else:
                     st.markdown('<div class="alert-box alert-error">❌ بيانات الدخول غير صحيحة.</div>', unsafe_allow_html=True)
-        st.markdown("""
-        <div style="margin-top:1.5rem; padding:1rem; background:rgba(43,127,255,0.06);
-                    border:1px solid rgba(43,127,255,0.15); border-radius:8px;
-                    font-size:0.78rem; color:#4a6fa0; font-family:'JetBrains Mono',monospace;">
-           
-        """, unsafe_allow_html=True)
 
     with tab_reg:
         st.markdown("<div style='height:1rem'></div>", unsafe_allow_html=True)
@@ -914,7 +972,7 @@ def render_sidebar():
         st.markdown("""
         <div style="margin-top:1rem; text-align:center; font-size:0.65rem;
                     color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
-            © 2025 AI Talent Engine<br>Powered by Kareem Tamer Temsah 
+            © 2025 AI Talent Engine<br>Powered by Kareem Tamer Temsah
         </div>
         """, unsafe_allow_html=True)
 
@@ -1318,10 +1376,8 @@ def page_career_mobility(df: pd.DataFrame):
 
                     st.markdown("</div>", unsafe_allow_html=True)
 
-          
-
 # ─────────────────────────────────────────────
-# PAGE 4 — Admin Dashboard (مع إدارة المستخدمين الكاملة)
+# PAGE 4 — Admin Dashboard
 # ─────────────────────────────────────────────
 def page_admin(df: pd.DataFrame):
     st.markdown("""
@@ -1361,7 +1417,7 @@ def page_admin(df: pd.DataFrame):
 
     st.markdown("#### 🔧 عمليات سريعة على مستخدم معين")
 
-    col_sel, col_op = st.columns([2,1])
+    col_sel, col_op = st.columns([2, 1])
     with col_sel:
         user_to_manage = st.selectbox(
             "اختر المستخدم",
@@ -1369,7 +1425,6 @@ def page_admin(df: pd.DataFrame):
             format_func=lambda x: f"{users_df[users_df['id']==x]['email'].iloc[0]} ({users_df[users_df['id']==x]['role'].iloc[0]})"
         )
     selected_user_role = users_df[users_df["id"] == user_to_manage]["role"].iloc[0]
-    selected_user_email = users_df[users_df["id"] == user_to_manage]["email"].iloc[0]
 
     with col_op:
         if st.button("🗑️ حذف هذا المستخدم", key="delete_selected"):
