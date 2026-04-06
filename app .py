@@ -31,7 +31,7 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-# GLOBAL CSS
+# GLOBAL CSS (Responsive Sidebar + Dark Theme)
 # ─────────────────────────────────────────────
 GLOBAL_CSS = """
 <style>
@@ -69,7 +69,7 @@ html, body, [data-testid="stAppViewContainer"] {
     font-family: 'Cairo', 'Syne', sans-serif !important;
 }
 
-/* ========== SIDEBAR — DESKTOP ========== */
+/* ========== SIDEBAR - DESKTOP ========== */
 @media (min-width: 993px) {
     [data-testid="stSidebar"] {
         transform: translateX(0) !important;
@@ -92,7 +92,7 @@ html, body, [data-testid="stAppViewContainer"] {
     .sidebar-overlay { display: none !important; }
 }
 
-/* ========== SIDEBAR — MOBILE SLIDE ========== */
+/* ========== SIDEBAR - MOBILE SLIDE ========== */
 @media (max-width: 992px) {
     [data-testid="stSidebar"] {
         transform: translateX(-100%) !important;
@@ -442,7 +442,7 @@ st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
 st.markdown(CARD_CSS, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# HAMBURGER BUTTON + OVERLAY + SLIDE JS
+# HAMBURGER BUTTON + OVERLAY + SLIDE JS (Improved)
 # ─────────────────────────────────────────────
 st.markdown("""
 <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Menu">
@@ -456,111 +456,99 @@ st.markdown("""
 (function() {
     'use strict';
 
-    var hamburger = document.getElementById('hamburgerBtn');
-    var overlay   = document.getElementById('sidebarOverlay');
-    var isOpen    = false;
+    let hamburger = document.getElementById('hamburgerBtn');
+    let overlay   = document.getElementById('sidebarOverlay');
+    let isOpen    = false;
 
     function getSidebar() {
         return document.querySelector('[data-testid="stSidebar"]');
     }
 
     function openSidebar() {
-        var sb = getSidebar();
+        let sb = getSidebar();
         if (!sb) return;
         isOpen = true;
         sb.classList.add('sidebar-open');
-        hamburger.classList.add('is-open');
-        // Overlay fade in
-        overlay.classList.add('visible');
-        requestAnimationFrame(function() {
-            overlay.classList.add('active');
-        });
+        if (hamburger) hamburger.classList.add('is-open');
+        if (overlay) {
+            overlay.classList.add('visible');
+            setTimeout(() => overlay.classList.add('active'), 10);
+        }
         document.body.style.overflow = 'hidden';
     }
 
     function closeSidebar() {
-        var sb = getSidebar();
+        let sb = getSidebar();
         if (!sb) return;
         isOpen = false;
         sb.classList.remove('sidebar-open');
-        hamburger.classList.remove('is-open');
-        // Overlay fade out
-        overlay.classList.remove('active');
-        setTimeout(function() {
-            overlay.classList.remove('visible');
-        }, 300);
+        if (hamburger) hamburger.classList.remove('is-open');
+        if (overlay) {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.classList.remove('visible'), 300);
+        }
         document.body.style.overflow = '';
     }
 
-    // Hamburger toggle
+    function toggleSidebar() {
+        if (isOpen) closeSidebar();
+        else openSidebar();
+    }
+
+    // Event listeners
     if (hamburger) {
-        hamburger.addEventListener('click', function(e) {
+        hamburger.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (isOpen) closeSidebar();
-            else openSidebar();
+            toggleSidebar();
         });
     }
 
-    // Overlay click → close
     if (overlay) {
         overlay.addEventListener('click', closeSidebar);
     }
 
-    // Escape key → close
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && isOpen) closeSidebar();
     });
 
-    // لما تضغط nav button في الـ sidebar → اغلق على mobile
-    function bindNavLinks() {
-        var sb = getSidebar();
+    // Close sidebar on mobile after clicking any button inside it
+    function attachSidebarButtonListeners() {
+        let sb = getSidebar();
         if (!sb) return;
-        sb.querySelectorAll('button').forEach(function(btn) {
-            if (!btn.dataset.closeListener) {
-                btn.addEventListener('click', function() {
+        let buttons = sb.querySelectorAll('button');
+        buttons.forEach(btn => {
+            if (!btn.hasAttribute('data-sidebar-closer')) {
+                btn.setAttribute('data-sidebar-closer', 'true');
+                btn.addEventListener('click', () => {
                     if (window.innerWidth <= 992) {
                         setTimeout(closeSidebar, 150);
                     }
                 });
-                btn.dataset.closeListener = 'true';
             }
         });
     }
 
-    // Observer على الـ sidebar لـ rebind لما Streamlit يعيد رسمه
-    function startObserver() {
-        var sb = getSidebar();
-        if (!sb) {
-            setTimeout(startObserver, 300);
-            return;
-        }
-        bindNavLinks();
-        new MutationObserver(function() {
-            bindNavLinks();
-        }).observe(sb, { childList: true, subtree: true });
-    }
+    // Watch for DOM changes (Streamlit re-renders)
+    const observer = new MutationObserver(() => {
+        attachSidebarButtonListeners();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
 
-    // Resize: لو رجعنا desktop نغلق وننظف
-    window.addEventListener('resize', function() {
+    // Initial attachment after a short delay
+    setTimeout(attachSidebarButtonListeners, 500);
+
+    // On resize: if desktop, force close mobile state
+    window.addEventListener('resize', () => {
         if (window.innerWidth > 992) {
-            var sb = getSidebar();
-            if (sb) sb.classList.remove('sidebar-open');
-            hamburger.classList.remove('is-open');
-            overlay.classList.remove('active', 'visible');
-            document.body.style.overflow = '';
-            isOpen = false;
+            closeSidebar();
         }
     });
-
-    // ابدأ بعد ما Streamlit يرسم الـ DOM
-    setTimeout(startObserver, 600);
-
 })();
 </script>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# DATABASE — SQLite Auth
+# DATABASE — SQLite Auth (thread-safe)
 # ─────────────────────────────────────────────
 DB_PATH = "talent_engine.db"
 
@@ -913,7 +901,7 @@ def render_login_page():
                     st.markdown(f'<div class="alert-box alert-error">❌ {msg}</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# SIDEBAR
+# SIDEBAR (with sliding functionality)
 # ─────────────────────────────────────────────
 def render_sidebar():
     with st.sidebar:
